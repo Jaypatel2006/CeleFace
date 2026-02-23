@@ -2,6 +2,7 @@ import os
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from PIL import Image
 import torch
+import torch.nn.functional as fn
 
 mtcnn = MTCNN()
 resnet = InceptionResnetV1(pretrained="vggface2").eval()
@@ -59,4 +60,25 @@ def get_embeddings(img):
 # torch.save(celeb_embeddings, "celeb_embeddings.pt")
 
 data = torch.load("celeb_embeddings.pt")
-print(data['Brad Pitt'])
+def find_similarity(embd1,embd2):
+    score = fn.cosine_similarity(embd1,embd2,dim=-1)
+
+    return score.item()
+
+def get_min_similarity(embd):
+    maxi = -1
+    matched_person = None
+    with torch.no_grad():
+        for person,e in data.items():
+            score = find_similarity(data[person],embd)
+            if score>maxi:
+                matched_person = person
+                maxi = score
+        return matched_person
+    
+
+#Just for Testing
+# img = preprocess(r"D:\JAY\celeface\Celebrity Faces Dataset\Angelina Jolie\001_fe3347c0.jpg")
+# embd = get_embeddings(img)
+# matching = get_min_similarity(embd)
+# print(matching)
