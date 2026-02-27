@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Celebrity Face Match</title>
+
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 1.5rem 0;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hero {
+      text-align: center;
+      margin-top: 3rem;
+      max-width: 750px;
+      padding: 0 1rem;
+      animation: fadeIn 1.2s ease;
+    }
+
+    .hero h1 {
+      font-size: 2.7rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ffdd8a, #ffcb5a, #f9ad42);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #ccc;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .card {
+      margin-top: 3rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2.5rem;
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 40px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 90%;
+      max-width: 450px;
+      animation: fadeUp 1.2s ease;
+    }
+
+    input[type="file"] {
+      margin: 1.5rem 0;
+      padding: 0.8rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      color: #fff;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    button {
+      padding: 0.9rem 2rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(90deg, #ffcb5a, #f9ad42);
+      font-size: 1rem;
+      font-weight: 600;
+      transition: 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ffd479, #fbbb48);
+      transform: translateY(-2px);
+    }
+
+    #result {
+      margin-top: 1.8rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #ffcb5a;
+      min-height: 30px;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 2rem 0;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>CeleFace</header>
+
+<div class="hero">
+  <h1>Discover Your Celebrity Look-Alike</h1>
+  <p>Upload a photo and let our AI analyze your features to reveal which celebrity you resemble the most. Fast, fun, and surprisingly accurate.</p>
+</div>
+
+<div class="card">
+  <input type="file" id="photoInput" accept="image/*" />
+  <button onclick="mockMatch()">Find My Match</button>
+  <div id="result"></div>
+</div>
+
+<footer>© 2025 CeleFace</footer>
+
+<script>
+  async function send_img_to_server(file) {
+    const formdata = new FormData();
+    formdata.append("photo",file);
+    const response = await fetch('http://localhost:8000/findmatch',{
+      method:"POST",
+      body:formdata
+    });
+    const data = await response.json();
+    return data;
+  }
+  function mockMatch() {
+    const input = document.getElementById("photoInput");
+
+    if (!input.files.length) {
+      document.getElementById("result").innerText = "Please upload a photo first.";
+      return;
+    }
+    
+    document.getElementById("result").innerText = "Analyzing your face…";
+    data = send_img_to_server(input.files[0])
+    data.then((d)=>{
+      console.log(d);
+    })
+  }
+</script>
+
+</body>
+</html>

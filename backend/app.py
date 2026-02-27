@@ -6,8 +6,8 @@ import torch.nn.functional as fn
 
 mtcnn = MTCNN()
 resnet = InceptionResnetV1(pretrained="vggface2").eval()
-
 celeb_embeddings = {}
+
 
 def preprocess(image_path):
     img = Image.open(image_path).convert("RGB")
@@ -18,6 +18,16 @@ def preprocess(image_path):
         return None
     
     return face.unsqueeze(0) 
+
+def preprocess_img(img):
+    face = mtcnn(img)
+
+    if face is None:
+        print("No face detected in:", image_path)
+        return None
+    
+    return face.unsqueeze(0)
+
 
 def get_embeddings(img):
     with torch.no_grad():
@@ -59,11 +69,11 @@ def get_embeddings(img):
 
 # torch.save(celeb_embeddings, "celeb_embeddings.pt")
 
-data = torch.load("celeb_embeddings.pt")
+data = torch.load(r"D:\JAY\celeface\celeb_embeddings.pt")
 def find_similarity(embd1,embd2):
     score = fn.cosine_similarity(embd1,embd2,dim=-1)
-
     return score.item()
+
 
 def get_min_similarity(embd):
     maxi = -1
