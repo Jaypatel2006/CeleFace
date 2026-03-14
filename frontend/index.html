@@ -168,11 +168,19 @@
     }
     
     document.getElementById("result").innerText = "Analyzing your face…";
-    data = send_img_to_server(input.files[0])
-    data.then((d)=>{
-      console.log(d);
-    })
-  }
+
+  let data = send_img_to_server(input.files[0]);
+
+  data.then((d) => {
+    console.log(d);
+
+    document.getElementById("result").innerHTML = `
+      <img src="${d.matched_img_url}" width="300" style="border-radius:10px;" />
+      <p>Match: ${d.matched}</p>
+    `;
+  });
+}
+
 </script>
 
 </body>
